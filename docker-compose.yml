@@ -1,0 +1,30 @@
+﻿services:
+  orthanc-pacs:
+    image: jodogne/orthanc-plugins:latest
+    container_name: csc_orthanc_pacs
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8042:8042"
+      - "127.0.0.1:4242:4242"
+    environment:
+      ORTHANC__NAME: "CSC_STP_DEID_VERIFIED_PACS"
+      ORTHANC__AUTHENTICATION_ENABLED: "true"
+    volumes:
+      - orthanc_storage:/var/lib/orthanc/db
+
+  study-registry-db:
+    image: postgres:16-alpine
+    container_name: csc_postgres_registry
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_USER: csc_admin
+      POSTGRES_PASSWORD: change_me_local_only_2026
+      POSTGRES_DB: dicom_registry
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  orthanc_storage:
+  pg_data:
